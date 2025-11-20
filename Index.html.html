@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Bioimpresión 3D</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(14px);
+      padding: 25px;
+      border-radius: 20px;
+      max-width: 850px;
+      width: 100%;
+      box-shadow: 0 0 25px rgba(0,0,0,0.4);
+    }
+    h1 {
+      font-size: 26px;
+      margin-bottom: 10px;
+      color: #38bdf8;
+    }
+    p { color: #cbd5e1; }
+    fieldset {
+      margin-bottom: 20px;
+      border-radius: 14px;
+      border: 1px solid #1e293b;
+      padding: 15px;
+      transition: 0.3s;
+    }
+    fieldset:hover {
+      background: rgba(255,255,255,0.04);
+      transform: scale(1.01);
+    }
+    legend {
+      font-weight: bold;
+      color: #bae6fd;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    label:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    input { accent-color: #38bdf8; }
+    button {
+      padding: 12px 18px;
+      font-size: 15px;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: 0.2s;
+    }
+    .submit-btn { background: #38bdf8; color: #0f172a; }
+    .submit-btn:hover { background: #7dd3fc; }
+    .reset-btn { background: #334155; color: #e2e8f0; }
+    .reset-btn:hover { background: #475569; }
+    .buttons { display: flex; gap: 10px; align-items: center; }
+    .score-box { margin-left: auto; text-align: right; }
+    .correct { color: #4ade80; margin-left: auto; font-size: 14px; }
+    .wrong { color: #f87171; margin-left: auto; font-size: 14px; }
+    .export-btn {
+      background: #22d3ee;
+      color: #0f172a;
+    }
+    .export-btn:hover {
+      background: #67e8f9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Quiz: Impresión 3D de Órganos</h1>
+    <p style="font-size:14px;">Completá el quiz. Si obtenés más del 70%, ¡ganás un llavero virtual! 🎁</p>
+
+    <form id="quizForm"></form>
+
+    <script>
+      const questions = [
+        { id: 1, q: "¿Cuál es la principal razón por la que nació la bioimpresión 3D?", options:{a:"Crear robots biológicos",b:"Resolver la escasez mundial de órganos",c:"Fabricar fármacos más baratos"}, answer:"b" },
+        { id: 2, q: "¿Qué ventaja clave tiene un órgano bioimpreso con células del paciente?", options:{a:"Cambia de color",b:"No necesita cirugía",c:"Reduce casi a cero el rechazo inmunológico"}, answer:"c" },
+        { id: 3, q: "¿Cuál de estos tejidos es el más avanzado en impresión 3D hoy en día?", options:{a:"Piel",b:"Corazón completo",c:"Pulmones"}, answer:"a" },
+        { id: 4, q: "¿Qué pionero logró imprimir y trasplantar una vejiga en 2006?", options:{a:"Elon Musk",b:"Anthony Atala",c:"Stephen Hawking"}, answer:"b" },
+        { id: 5, q: "¿Qué componente funciona como 'andamio'?", options:{a:"Metales",b:"Hidrogeles y matriz extracelular",c:"Carbón"}, answer:"b" },
+        { id: 6, q: "¿Cuál es uno de los mayores desafíos de órganos complejos?", options:{a:"Colores",b:"Vascularización",c:"Tamaño de archivo"}, answer:"b" },
+        { id: 7, q: "¿Qué órgano ya se usa en ensayos clínicos?", options:{a:"Corazón",b:"Piel",c:"Pulmones"}, answer:"b" },
+        { id: 8, q: "¿Qué hace un biorreactor?", options:{a:"Da sabor",b:"Ilumina",c:"Permite maduración"}, answer:"c" },
+        { id: 9, q: "¿Qué órgano impreso ha logrado latir?", options:{a:"Corazón",b:"Riñón",c:"Hígado"}, answer:"a" },
+        { id: 10, q: "¿Qué característica destaca la bioimpresión?", options:{a:"Invisibilidad",b:"Personalización total",c:"Sabores"}, answer:"b" }
+      ];
+
+      const form = document.getElementById("quizForm");
+
+      function renderQuiz() {
+        form.innerHTML = "";
+
+        questions.forEach(q => {
+          const field = document.createElement("fieldset");
+          const legend = document.createElement("legend");
+          legend.textContent = `${q.id}. ${q.q}`;
+          field.appendChild(legend);
+
+          Object.entries(q.options).forEach(([key,text]) => {
+            const label = document.createElement("label");
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = `q-${q.id}`;
+            input.value = key;
+
+            label.appendChild(input);
+            label.append(" " + text);
+            field.appendChild(label);
+          });
+
+          form.appendChild(field);
+        });
+
+        const buttonsDiv = document.createElement("div");
+        buttonsDiv.className = "buttons";
+
+        const submitBtn = document.createElement("button");
+        submitBtn.textContent = "Enviar";
+        submitBtn.className = "submit-btn";
+        submitBtn.type = "button";
+
+        const resetBtn = document.createElement("button");
+        resetBtn.textContent = "Reiniciar";
+        resetBtn.className = "reset-btn";
+        resetBtn.type = "button";
+
+        const exportBtn = document.createElement("button");
+        exportBtn.textContent = "Exportar Resultado";
+        exportBtn.className = "export-btn";
+        exportBtn.type = "button";
+
+        const scoreBox = document.createElement("div");
+        scoreBox.className = "score-box";
+
+        buttonsDiv.append(submitBtn, resetBtn, exportBtn, scoreBox);
+        form.appendChild(buttonsDiv);
+
+        submitBtn.onclick = () => grade(scoreBox);
+        resetBtn.onclick = () => renderQuiz();
+        exportBtn.onclick = () => exportResult(scoreBox.innerText);
+      }
+
+      function grade(scoreBox) {
+        let score = 0;
+
+        questions.forEach(q => {
+          const selected = document.querySelector(`input[name='q-${q.id}']:checked`);
+
+          document.querySelectorAll(`input[name='q-${q.id}']`).forEach(lb => {
+            lb.parentNode.querySelector('.correct, .wrong')?.remove();
+          });
+
+          if (!selected) return;
+
+          const marker = document.createElement("span");
+
+          if (selected.value === q.answer) {
+            score++;
+            marker.className = "correct";
+            marker.textContent = "✔";
+          } else {
+            marker.className = "wrong";
+            marker.textContent = "✖";
+          }
+
+          selected.parentNode.appendChild(marker);
+        });
+
+        const percent = Math.round((score / questions.length) * 100);
+        scoreBox.innerHTML = `Puntaje: <b>${score}/${questions.length}</b> (${percent}%)<br>` +
+          (percent >= 70 ? `<span style='color:#4ade80'>¡Aprobado! 🎉</span>` : `<span style='color:#f87171'>No alcanzaste 70%. Intentá otra vez.</span>`);
+      }
+
+      function exportResult(text) {
+        const blob = new Blob([text], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "resultado_quiz.txt";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      renderQuiz();
+    </script>
+  </div>
+</body>
+</html>
